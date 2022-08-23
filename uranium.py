@@ -6,8 +6,6 @@ import time
 from modules.banner import bstring
 from modules.banner import print_banner
 
-# templates = os.system('ls templates')
-
 os.system('clear')
 print_banner()
 
@@ -41,17 +39,41 @@ optionalNamed = parser.add_argument_group('optional') ### OPTIONAL ARGS ###
 optionalNamed.add_argument(
         "-p",
         "--port",
-        type=str,
+        type=int,
         required=False,
         help=("Choose custom port (80 by default) for python http server. " +
             "All processes on that port will be killed! " + 
             "Example: -p 80"))
+optionalNamed.add_argument(
+        "-n",
+        "--nointernet",
+        action='store_true',
+        required=False,
+        help=("Do not enable internet after client login successfuly. " +
+            "Example: -n"))
+optionalNamed.add_argument(
+        "-v",
+        "--verbose",
+        action='store_true',
+        required=False,
+        help=("Option for uranium flask server. " +
+            "Unhide default flask messages like GET/POST etc. " +
+            "Example: -v"))
 
 args = parser.parse_args()
 
 iface = args.interface
 ssid = args.ssid
 template = args.template
+if args.nointernet is not False:
+    nointernet = '-n'
+else:
+    nointernet = ''
+
+if args.verbose is not False:
+    verbose = '-v'
+else:
+    verbose = ''
 
 print(bstring.INFO, 'Using interface:', iface)
 print(bstring.INFO, 'Using SSID:', ssid)
@@ -64,8 +86,8 @@ else:
     server_port = 80
     print(bstring.INFO, 'Using default port:', server_port)
 
-
-
+print(bstring.INFO, 'Nointernet:', args.nointernet)
+print(bstring.INFO, 'Verbose:', args.verbose)
 
 print("\n" + bstring.ACTION, "Updating configuration...")
 
@@ -74,45 +96,45 @@ os.system('sed -i "s/interface\=.*/interface=' + iface + '/" config/hostapd.conf
 os.system('sed -i "s/ssid\=.*/ssid=' + ssid + '/" config/hostapd.conf')
 
 
-print("\n" + bstring.ACTION, "Stopping network services in 3s...")
-
-time.sleep(3)
+print(bstring.ACTION, "Stopping network services in 3s...")
 
 os.system('''
 systemctl stop NetworkManager > /dev/null 2>&1
-killall dnsmasq > /dev/null 2>&1
-killall hostapd > /dev/null 2>&1
-pkill wpa_supplicant > /dev/null 2>&1
-nmcli radio wifi off > /dev/null 2>&1
-rfkill unblock wlan > /dev/null 2>&1
-kill $(lsof -t -i:%s) > /dev/null 2>&1
-''') % (server_port)
+kill $(lsof -t -i:%d) > /dev/null 2>&1
+killall hostapd dnsmasq wpa_supplicant > /dev/null 2>&1
+''' % (server_port))
 
+time.sleep(3)
 
-print("\n" + bstring.ACTION, "Starting access point...")
-os.system('''
-echo 1 > /proc/sys/net/ipv4/ip_forward
-iptables --flush
-iptables --table nat --flush
-iptables --delete-chain
-iptables --table nat --delete-chain
-iptables -P FORWARD ACCEPT''')
+print(bstring.ACTION, "Configuring" + bstring.BLUE, iface + bstring.RESET + "...")
+os.system('ifconfig ' + iface + ' 10.0.0.1 netmask 255.255.255.0')
+os.system('route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.0.0.1')
+
+print(bstring.ACTION, "Starting access point...")
 
 os.system('dnsmasq -C config/dnsmasq.conf')
 os.system('hostapd config/hostapd.conf -B')
 
-print("\n" + bstring.ACTION, "Configuring" + bstring.BLUE, iface + bstring.RESET + "...")
-os.system('ifconfig ' + iface + ' 10.0.0.1 netmask 255.255.255.0')
+os.system('route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.0.0.1')
+os.system('echo 1 > /proc/sys/net/ipv4/ip_forward')
 
-print("\n" + bstring.ACTION, "Enabling http server...")
-print("\n" + bstring.ACTION, "Waiting for client interaction...")
+print("\n" + bstring.ACTION, "Configuring iptables...")
 
-os.system('python3 server.py -t %s -p %s' % (template, server_port))
+os.system('iptables -X')
+os.system('iptables -F')
+os.system('iptables -t nat -F')
+os.system('iptables -t nat -X')
+os.system('iptables -t nat -A POSTROUTING -o %s -j MASQUERADE' % iface)
 
-print("\n" + bstring.ACTION, "Enabling services back in 3s...")
+time.sleep(1)
+
+print(bstring.ACTION, "Deploying uranium server...")
+
+os.system('python3 server2.py -t %s -p %d %s %s' % (template, server_port, nointernet, verbose))
+
+print("\n" + bstring.ACTION, "Cleaning up...")
 
 time.sleep(3)
 
-os.system('''
-systemctl start NetworkManager > /dev/null 2>&1
-''')
+os.system('echo 0 > /proc/sys/net/ipv4/ip_forward')
+os.system('systemctl start NetworkManager > /dev/null 2>&1')

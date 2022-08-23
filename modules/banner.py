@@ -6,6 +6,7 @@ class bstring:
     INPUT = '[\033[94minput\033[0m]'
     VIOLET = '\033[95m' 
     BLUE = '\033[96m'
+    GREEN = '\033[92m'
     RESET = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
@@ -17,8 +18,8 @@ def print_banner():
 |    |   \____________    ____ |__|__ __  _____    /  _  \ ______  
 |    |   /\_  __ \__  \  /    \|  |  |  \/     \  /  /_\  \\____ \ 
 |    |  /  |  | \// __ \|   |  \  |  |  /  Y Y  \/    |    \  |_> >
-|______/   |__|  (____  /___|  /__|____/|__|_|  /\____|__  /   __/ 
+|______/   |__|  (____  /___|  /__|____/|__|_|  /\____|__  /   __/
                       \/     \/               \/         \/|__|""" + bstring.RESET +
 bstring.BOLD + """
-[ Created by https://github.com/cr4sh-me ]
+[ UraniumAp v1 ] [ Created by github.com/cr4sh-me ]
 """ + bstring.RESET)

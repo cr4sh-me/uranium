@@ -101,6 +101,7 @@ print(bstring.ACTION, "Stopping network services in 3s...")
 os.system('''
 systemctl stop NetworkManager > /dev/null 2>&1
 kill $(lsof -t -i:%d) > /dev/null 2>&1
+pkill dnsmasq
 killall hostapd dnsmasq wpa_supplicant > /dev/null 2>&1
 ''' % (server_port))
 
@@ -115,16 +116,19 @@ print(bstring.ACTION, "Starting access point...")
 os.system('dnsmasq -C config/dnsmasq.conf')
 os.system('hostapd config/hostapd.conf -B')
 
-os.system('route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.0.0.1')
+# os.system('route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.0.0.1')
 os.system('echo 1 > /proc/sys/net/ipv4/ip_forward')
 
 print("\n" + bstring.ACTION, "Configuring iptables...")
 
+# Flush old iptables rules
 os.system('iptables -X')
 os.system('iptables -F')
 os.system('iptables -t nat -F')
 os.system('iptables -t nat -X')
-os.system('iptables -t nat -A POSTROUTING -o %s -j MASQUERADE' % iface)
+
+# Enable traffic on localhost
+os.system('iptables -A INPUT -i lo -j ACCEPT')
 
 time.sleep(1)
 

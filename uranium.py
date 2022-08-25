@@ -124,7 +124,7 @@ print(bstring.ACTION, "Starting access point...")
 os.system('hostapd config/hostapd.conf -B -f %s/log/hostapd.log' % (pwd))
 os.system('dnsmasq -C config/dnsmasq.conf --log-queries --log-facility=%s/log/dnsmasq.log' % (pwd))
 
-if arg.nethunter is not None:
+if args.nethunter is not None:
     os.system('mount -o -rw,remount /system')
     os.system('echo "address=/#/10.0.0.1" > %s/config/dnsmasq.conf' % (pwd))
     os.system('iptables -t nat -I PREROUTING -p UDP --dport %s -j REDIRECT --to %s' % (port))

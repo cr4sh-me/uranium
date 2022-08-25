@@ -106,12 +106,11 @@ os.system('sed -i "s/ssid\=.*/ssid=' + ssid + '/" config/hostapd.conf')
 
 print(bstring.ACTION, "Stopping network services in 3s...")
 
-os.system('''
-systemctl stop NetworkManager > /dev/null 2>&1
-kill $(lsof -t -i:%d) > /dev/null 2>&1
-pkill dnsmasq
-killall hostapd dnsmasq wpa_supplicant > /dev/null 2>&1
-''' % (server_port))
+
+os.system('kill $(lsof -t -i:%d) > /dev/null 2>&1' % (server_port))
+os.system('pkill dnsmasq')
+os.system('pkill hostapd')
+
 
 time.sleep(3)
 
@@ -122,13 +121,7 @@ os.system('route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.0.0.1')
 print(bstring.ACTION, "Starting access point...")
 
 os.system('hostapd config/hostapd.conf -B -f %s/log/hostapd.log' % (pwd))
-os.system('dnsmasq -C config/dnsmasq.conf --log-queries --log-facility=%s/log/dnsmasq.log' % (pwd))
-
-if args.nethunter is not None:
-    os.system('mount -o -rw,remount /system')
-    os.system('echo "address=/#/10.0.0.1" > %s/config/dnsmasq.conf' % (pwd))
-    os.system('iptables -t nat -I PREROUTING -p UDP --dport %s -j REDIRECT --to %s' % (server_port, server_port))
-
+os.system('dnsmasq -z -C config/dnsmasq.conf --log-queries --log-facility=%s/log/dnsmasq.log -i %s -I lo' % (pwd, iface))
 
 # Enable port forwarding
 os.system('echo 1 > /proc/sys/net/ipv4/ip_forward')
@@ -152,7 +145,6 @@ os.system('python3 server2.py -t %s -p %d %s %s' % (template, server_port, noint
 
 print("\n" + bstring.ACTION, "Cleaning up...")
 
-time.sleep(3)
+time.sleep(1)
 
 os.system('echo 0 > /proc/sys/net/ipv4/ip_forward')
-os.system('systemctl start NetworkManager > /dev/null 2>&1')

@@ -127,7 +127,7 @@ os.system('dnsmasq -C config/dnsmasq.conf --log-queries --log-facility=%s/log/dn
 if args.nethunter is not None:
     os.system('mount -o -rw,remount /system')
     os.system('echo "address=/#/10.0.0.1" > %s/config/dnsmasq.conf' % (pwd))
-    os.system('iptables -t nat -I PREROUTING -p UDP --dport %s -j REDIRECT --to %s' % (port))
+    os.system('iptables -t nat -I PREROUTING -p UDP --dport %s -j REDIRECT --to %s' % (server_port))
 
 
 # Enable port forwarding

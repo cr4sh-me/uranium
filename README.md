@@ -17,7 +17,8 @@ Creates fake AP with captive portal login redirection!
 # Todo
 
 + Add support for nethunter
-+ Add more options
++ Add option for upstreaming network
++ Add more usefull options
 + Optimise code
 
 

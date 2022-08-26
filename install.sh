@@ -20,4 +20,7 @@ command -v pip3 >/dev/null 2>&1 || { printf >&2 "$action Installing package - pi
 
 pip3 install flask argparse
 
+chmod +x *
+chmod +x scripts/*
+
 printf "$info Installation done!\n"

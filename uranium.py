@@ -65,9 +65,21 @@ optionalNamed.add_argument(
         help=("Option for uranium flask server. " +
             "Unhide default flask messages like GET/POST etc. " +
             "Example: -v"))
+optionalNamed.add_argument(
+        "-u",
+        "--update",
+        action='store_true',
+        required=False,
+        help=("Check for updates & update script. " +
+            "Example: -u"))
 
 
 args = parser.parse_args()
+
+if args.update is not False:
+    print(bstring.ACTION, "Checking for updates...")
+    os.system('./scripts/check_update.sh')
+    exit()
 
 pwd = os.getcwd()
 

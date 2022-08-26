@@ -44,6 +44,13 @@ optionalNamed.add_argument(
             "All processes on that port will be killed! " + 
             "Example: -p 80"))
 optionalNamed.add_argument(
+        "-c",
+        "--channel",
+        type=int,
+        required=False,
+        help=("Choose custom channel (6 by default) for hostapd configuration. " +
+            "Example: -c 11"))
+optionalNamed.add_argument(
         "-n",
         "--nointernet",
         action='store_true',
@@ -58,13 +65,7 @@ optionalNamed.add_argument(
         help=("Option for uranium flask server. " +
             "Unhide default flask messages like GET/POST etc. " +
             "Example: -v"))
-optionalNamed.add_argument(
-        "-nh",
-        "--nethunter",
-        action='store_true',
-        required=False,
-        help=("Use this option on NetHunter device. " +
-            "Example: -nh"))
+
 
 args = parser.parse_args()
 
@@ -89,30 +90,28 @@ print(bstring.INFO, 'Using template:', template)
 
 if args.port is not None:
     server_port = args.port
-    print(bstring.INFO, 'Using custom port:', server_port) 
 else:
     server_port = 80
-    print(bstring.INFO, 'Using default port:', server_port)
 
-print(bstring.INFO, 'Nointernet:', args.nointernet)
-print(bstring.INFO, 'Verbose:', args.verbose)
+if args.channel is not None:
+    channel = args.channel
+else:
+    channel = 6
 
 print("\n" + bstring.ACTION, "Updating configuration...")
 
 os.system('sed -i "s/interface\=.*/interface=' + iface + '/" config/dnsmasq.conf')
 os.system('sed -i "s/interface\=.*/interface=' + iface + '/" config/hostapd.conf')
 os.system('sed -i "s/ssid\=.*/ssid=' + ssid + '/" config/hostapd.conf')
+os.system('sed -i "s/channel\=.*/channel=' + str(channel) + '/" config/hostapd.conf')
 
 
-print(bstring.ACTION, "Stopping network services in 3s...")
-
+print(bstring.ACTION, "Stopping network services in...")
 
 os.system('kill $(lsof -t -i:%d) > /dev/null 2>&1' % (server_port))
 os.system('pkill dnsmasq')
 os.system('pkill hostapd')
-
-
-time.sleep(3)
+time.sleep(1)
 
 print(bstring.ACTION, "Configuring" + bstring.BLUE, iface + bstring.RESET + "...")
 os.system('ifconfig ' + iface + ' 10.0.0.1 netmask 255.255.255.0')
@@ -137,14 +136,13 @@ os.system('iptables -t nat -X')
 # Enable traffic 
 os.system('iptables -A INPUT -j ACCEPT')
 
-time.sleep(1)
+print(bstring.ACTION, "Deploying uranium server in 3s...")
+time.sleep(3)
 
-print(bstring.ACTION, "Deploying uranium server...")
-
+os.system('clear')
 os.system('python3 server2.py -t %s -p %d %s %s' % (template, server_port, nointernet, verbose))
 
 print("\n" + bstring.ACTION, "Cleaning up...")
-
 time.sleep(1)
 
 os.system('echo 0 > /proc/sys/net/ipv4/ip_forward')

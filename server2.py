@@ -1,6 +1,5 @@
 from flask import Flask, redirect, url_for, request, render_template, request
 from modules.banner import bstring
-from threading import Timer
 import os
 import argparse
 import datetime

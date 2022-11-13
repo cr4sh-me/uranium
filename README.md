@@ -17,8 +17,17 @@ Creates fake AP with captive portal login redirection!
 ## Nethunter
 If you're getting iptables errors, try older one (1.6.2)  
 `wget http://old.kali.org/kali/pool/main/i/iptables/iptables_1.6.2-1.1_arm64.deb`  
+`wget http://old.kali.org/kali/pool/main/i/iptables/libip4tc0_1.6.2-1.1_arm64.deb`  
+`wget http://old.kali.org/kali/pool/main/i/iptables/libip6tc0_1.6.2-1.1_arm64.deb`  
+`wget http://old.kali.org/kali/pool/main/i/iptables/libiptc0_1.6.2-1.1_arm64.deb`  
+`wget http://old.kali.org/kali/pool/main/i/iptables/libxtables12_1.6.2-1.1_arm64.deb`  
 `dpkg -i *.deb`  
 `apt-mark hold iptables`  
+`apt-mark hold libip4tc0`  
+`apt-mark hold libip6tc0`  
+`apt-mark hold libiptc0`  
+`apt-mark hold libxtables12`  
+ 
 
 # Todo
 

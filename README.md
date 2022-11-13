@@ -14,6 +14,12 @@ Creates fake AP with captive portal login redirection!
 ## uranium usage
 `sudo python3 uranium.py --help`
 
+## Nethunter
+If you're getting iptables errors, try older one (1.6.2)  
+`wget http://old.kali.org/kali/pool/main/i/iptables/iptables_1.6.2-1.1_arm64.deb`  
+`dpkg -i *.deb`  
+`apt-mark hold iptables`  
+
 # Todo
 
 + Add support for nethunter

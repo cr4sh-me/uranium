@@ -17,6 +17,7 @@ apt update
 
 command -v python3 >/dev/null 2>&1 || { printf >&2 "$action Installing package - python3"; apt-get install python3 -y; }
 command -v pip3 >/dev/null 2>&1 || { printf >&2 "$action Installing package - pip3"; apt-get install python3-pip -y; }
+command -v hostapd >/dev/null 2>&1 || { printf >&2 "$action Installing package - hostapd"; apt-get install hostapd -y; }
 
 pip3 install flask argparse
 

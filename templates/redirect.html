@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/style.css') }}">
+    <title>DSE panel</title>
+</head>
+<body>
+    <div id="container" class="center">
+        <p>D<mark class="a">iscord</mark> S<mark class="b">erver</mark> E<mark class="c">xecutor</mark></p>
+        
+        <p>Launching DSE... Please wait!</p>
+
+        {% if error %}
+            <div class="terminal">
+                <p class="error terminal"><strong>Executed:</strong> {{ error }}
+            </div>  
+        {% endif %}
+    </div>
+</body>
+</html>

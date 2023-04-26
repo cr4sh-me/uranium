@@ -2,6 +2,7 @@ class bstring:
     ERROR = '[\033[91merror\033[0m]'
     INFO = '[\033[92minfo\033[0m]'
     ACTION = '[\033[93maction\033[0m]'
+    CREDS = '[\033[1;95;5mcreds\033[0m]'
     INPUT = '[\033[94minput\033[0m]'
     VIOLET = '\033[95m' 
     BLUE = '\033[96m'
@@ -12,21 +13,13 @@ class bstring:
 
 def print_banner():
 
-    print(bstring.BLUE + """\
-╔╦╗┬┌─┐┌─┐┌─┐┬─┐┌┬┐  ╔═╗┌─┐┬─┐┬  ┬┌─┐┬─┐  ╔═╗─┐ ┬┌─┐┌─┐┬ ┬┌┬┐┌─┐┬─┐
- ║║│└─┐│  │ │├┬┘ ││  ╚═╗├┤ ├┬┘└┐┌┘├┤ ├┬┘  ║╣ ┌┴┬┘├┤ │  │ │ │ │ │├┬┘
-═╩╝┴└─┘└─┘└─┘┴└──┴┘  ╚═╝└─┘┴└─ └┘ └─┘┴└─  ╚═╝┴ └─└─┘└─┘└─┘ ┴ └─┘┴└─""" + bstring.RESET +
-bstring.BOLD + """
-[ Discord Server Executor v1.0 ] [ Created by github.com/cr4sh-me ]
-""" + bstring.RESET)
-
-def print_banner_server():
-
     print(bstring.VIOLET + """\
-
-╔╦╗╔═╗╔═╗  ╔═╗┌─┐┬─┐┬  ┬┌─┐┬─┐
- ║║╚═╗║╣   ╚═╗├┤ ├┬┘└┐┌┘├┤ ├┬┘
-═╩╝╚═╝╚═╝  ╚═╝└─┘┴└─ └┘ └─┘┴└─""" + bstring.RESET +
+ ____ ___                      .__                  _____          
+|    |   \____________    ____ |__|__ __  _____    /  _  \ ______  
+|    |   /\_  __ \__  \  /    \|  |  |  \/     \  /  /_\  \\____ \ 
+|    |  /  |  | \// __ \|   |  \  |  |  /  Y Y  \/    |    \  |_> >
+|______/   |__|  (____  /___|  /__|____/|__|_|  /\____|__  /   __/
+                      \/     \/               \/         \/|__|""" + bstring.RESET +
 bstring.BOLD + """
-[ DSE Server v1.0 ] [ Created by github.com/cr4sh-me ]
+[ UraniumAp v1 ] [ Created by github.com/cr4sh-me ]
 """ + bstring.RESET)
